@@ -3,7 +3,7 @@
 import os
 
 from flask import Flask, request, Response, redirect
-from pygoogle import pygoogle
+from pygoogle import PyGoogle
 
 
 NO_PAGES = 1
@@ -12,14 +12,14 @@ app = Flask(__name__)
 
 
 @app.route('/google', methods=['post'])
-def overflow():
+def google():
     '''
     Example:
         /google python list comprehension
     '''
-    text = request.values.get('text')
+    search_query = request.values.get('text')
 
-    gs = pygoogle(text)
+    gs = PyGoogle(search_query)
     gs.pages = NO_PAGES
 
     resp = [gs.get_urls()]

@@ -50,22 +50,22 @@ FILTER_ON = 1
 # http://code.google.com/apis/ajaxsearch/documentation/reference.html#_fonje_args
 """
 RSZ
-This optional argument supplies the number of results that the application would like to recieve. 
-A value of small indicates a small result set size or 4 results. 
-A value of large indicates a large result set or 8 results. If this argument is not supplied, a value of small is assumed. 
+This optional argument supplies the number of results that the application would like to recieve.
+A value of small indicates a small result set size or 4 results.
+A value of large indicates a large result set or 8 results. If this argument is not supplied, a value of small is assumed.
 """
 RSZ_SMALL = "small"
 RSZ_LARGE = "large"
 
 """
 HL
-This optional argument supplies the host language of the application making the request. 
-If this argument is not present then the system will choose a value based on the value of the Accept-Language http header. 
+This optional argument supplies the host language of the application making the request.
+If this argument is not present then the system will choose a value based on the value of the Accept-Language http header.
 If this header is not present, a value of en is assumed.
 """
 
 
-class pygoogle:
+class PyGoogle:
 
     def __init__(self, query, pages=10, hl='en', log_level=logging.INFO):
         self.pages = pages  # Number of pages. default 10
@@ -105,7 +105,7 @@ class pygoogle:
             q = urllib.urlencode(args)
             search_results = urllib.urlopen(URL + q)
             data = json.loads(search_results.read())
-            if not data.has_key('responseStatus'):
+            if 'responseStatus' not in data:
                 self.logger.error('response does not have a responseStatus key')
                 continue
             if data.get('responseStatus') != 200:
@@ -113,11 +113,14 @@ class pygoogle:
                 self.logger.error('responseDetails : %s' % (data.get('responseDetails', None)))
                 continue
             if print_results:
-                if data.has_key('responseData') and data['responseData'].has_key('results'):
+                if 'responseData' in data and 'results' in data['responseData']:
                     for result in data['responseData']['results']:
                         if result:
                             print '[%s]' % (urllib.unquote(result['titleNoFormatting']))
-                            print result['content'].strip("<b>...</b>").replace("<b>", '').replace("</b>", '').replace("&#39;", "'").strip()
+                            print result['content'].strip("<b>...</b>").replace("<b>",
+                                                                                '').replace("</b>",
+                                                                                            '').replace("&#39;",
+                                                                                                        "'").strip()
                             print urllib.unquote(result['unescapedUrl']) + '\n'
                 else:
                     # no responseData key was found in 'data'
@@ -133,9 +136,9 @@ class pygoogle:
             self.logger.info('No results returned')
             return results
         for data in search_results:
-            if data.has_key('responseData') and data['responseData'].has_key('results'):
+            if 'responseData' in data and 'results' in data['responseData']:
                 for result in data['responseData']['results']:
-                    if result and result.has_key('titleNoFormatting'):
+                    if result and 'titleNoFormatting' in result:
                         title = urllib.unquote(result['titleNoFormatting'])
                         results[title] = urllib.unquote(result['unescapedUrl'])
             else:
@@ -158,9 +161,9 @@ class pygoogle:
             search_results = urllib.urlopen(URL + q)
             data = json.loads(search_results.read())
             urls = []
-            if data.has_key('responseData') and data['responseData'].has_key('results'):
+            if 'responseData' in data and 'results' in data['responseData']:
                 for result in data['responseData']['results']:
-                    if result and result.has_key('unescapedUrl'):
+                    if result and 'unescapedUrl' in result:
                         url = urllib.unquote(result['unescapedUrl'])
                         urls.append(url)
             else:
@@ -176,7 +179,7 @@ class pygoogle:
             self.logger.info('No results returned')
             return results
         for data in search_results:
-            if data and data.has_key('responseData') and data['responseData']['results']:
+            if data and 'responseData' in data and 'results' in data['responseData']:
                 for result in data['responseData']['results']:
                     if result:
                         results.append(urllib.unquote(result['unescapedUrl']))
@@ -196,7 +199,7 @@ class pygoogle:
                 return 0
             result_count = result_count.get('responseData', None)
             if result_count:
-                if result_count.has_key('cursor') and result_count['cursor'].has_key('estimatedResultCount'):
+                if 'cursor' in result_count and 'estimatedResultCount' in result_count['cursor']:
                     return result_count['cursor']['estimatedResultCount']
             return 0
         except Exception, e:
@@ -224,7 +227,7 @@ def main():
     if not query:
         parser.print_help()
         exit()
-    search = pygoogle(log_level=log_level, query=query, pages=args.pages, hl=args.language)
+    search = PyGoogle(log_level=log_level, query=query, pages=args.pages, hl=args.language)
     search.display_results()
 
 if __name__ == "__main__":

@@ -185,6 +185,20 @@ class PyGoogle:
                         results.append(urllib.unquote(result['unescapedUrl']))
         return results
 
+    def get_result_titles(self):
+        """Returns list of result titles"""
+        results = []
+        search_results = self.__search__()
+        if not search_results:
+            self.logger.info('No results returned')
+            return results
+        for data in search_results:
+            if data and 'responseData' in data and 'results' in data['responseData']:
+                for result in data['responseData']['results']:
+                    if result:
+                        results.append(urllib.unquote(result['titleNoFormatting']))
+        return results
+
     def get_result_count(self):
         """Returns the number of results"""
         temp = self.pages

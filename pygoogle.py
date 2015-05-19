@@ -171,7 +171,7 @@ class PyGoogle:
             results[page] = urls
         return results
 
-    def get_urls(self):
+    def get_result_urls(self):
         """Returns list of result URLs"""
         results = []
         search_results = self.__search__()

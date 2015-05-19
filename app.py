@@ -22,12 +22,20 @@ def google():
     gs = PyGoogle(search_query)
     gs.pages = NO_PAGES
 
-    resp = gs.get_urls()
+    urls = gs.get_result_urls()
+    # need to remove | character to get links right in slack output
+    titles = [t.replace('|', '') for t in gs.get_result_titles()]
+    resp = dict(zip(titles, urls))
 
     if not resp:
-        resp.append('No results found.')
+        resp = 'No results found.'
+    else:
+        temp = []
+        for k in resp:
+            temp.append('<%s|%s>' % (resp[k], k))
+        resp = '\n'.join(temp)
 
-    return Response('\n'.join(resp), content_type='text/plain; charset=utf-8')
+    return Response(resp, content_type='text/plain; charset=utf-8')
 
 
 @app.route('/')

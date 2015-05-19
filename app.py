@@ -22,7 +22,7 @@ def google():
     gs = PyGoogle(search_query)
     gs.pages = NO_PAGES
 
-    resp = [gs.get_urls()]
+    resp = gs.get_urls()
 
     if not resp:
         resp.append('No results found.')
